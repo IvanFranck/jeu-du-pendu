@@ -21,7 +21,7 @@ body{
 }
 
 .word-to-find{
-  flex: 0 0 50%;
+  flex: 0 0 40%;
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -50,4 +50,12 @@ body{
   width: 20px;
   height: 20px;
   text-align: center;
+}
+
+.guesses{
+  align-self: flex-end;
+  display: flex;
+  justify-self: flex-end;
+  align-items: center;
+  justify-content: flex-end;
 }

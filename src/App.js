@@ -5,11 +5,19 @@ import './App.css';
 const KEYBOARD = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
 
 const MOT_A_TROUVER = 'JAVA'
+
+const INITIAL_STATE = {
+  wordToFind: MOT_A_TROUVER,
+  usedLetter: new Set(),
+  won: false,
+  guesses: 0
+}
 class App extends Component{
   state = {
     wordToFind: MOT_A_TROUVER,
     usedLetter: new Set(),
-    won: false
+    won: false,
+    guesses: 0
   }
 
 
@@ -23,9 +31,13 @@ class App extends Component{
 
   //arrow fx for binding
   handleKeyClick = (e) =>{
-    const usedLetter = this.state.usedLetter
+    const {usedLetter, guesses}= this.state 
+    const newGeusses = guesses + 1
     const newUsedLetter = usedLetter.add(e.target.innerText)
-    this.setState({usedLetter: newUsedLetter})
+    this.setState({
+      usedLetter: newUsedLetter,
+      guesses: newGeusses
+    })
 
     this.handleNewLetterFind()
   }
@@ -33,11 +45,7 @@ class App extends Component{
   //arrow fx for binding
 
   handleNewgame= () =>{
-    this.setState({
-      wordToFind: MOT_A_TROUVER,
-      usedLetter: new Set(),
-      won: false
-    })
+    this.setState(INITIAL_STATE)
   }
   
   //arrow fx for binding
@@ -56,7 +64,7 @@ class App extends Component{
   }
 
   render(){
-    const {wordToFind, usedLetter, won} = this.state
+    const {wordToFind, usedLetter, won, guesses} = this.state
     if (won){
       return(
         <div className="container">
@@ -73,6 +81,7 @@ class App extends Component{
     }
     return(
       <div className="container">
+        <span className='geusses'>{guesses}</span>
         <div className="word-to-find">
           {this.computedDisplay(wordToFind, usedLetter)}
         </div>

@@ -1,7 +1,7 @@
 const Keyboard = function ({letters, onClick}){
-    return letters.map(letter=>{
+    return letters.map((letter, index)=>{
         return (
-            <span key={letter} onClick={onClick} className="keyboard-letter">
+            <span key={index} onClick={onClick} className="keyboard-letter">
               {letter}
             </span>
         
