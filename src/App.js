@@ -1,96 +1,107 @@
-import {Component} from 'react'
-import Keyboard from './Keyboard'
-import './App.css';
 
-const KEYBOARD = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+import {useEffect, useState} from 'react';
+import './index.css';
 
-const MOT_A_TROUVER = 'JAVA'
-
-const INITIAL_STATE = {
-  wordToFind: MOT_A_TROUVER,
-  usedLetter: new Set(),
-  won: false,
-  guesses: 0
-}
-class App extends Component{
-  state = {
-    wordToFind: MOT_A_TROUVER,
-    usedLetter: new Set(),
-    won: false,
-    guesses: 0
-  }
+const ALPHABET = "abcdefghijklmnopqrstuvwxyz".toLocaleUpperCase().split('');
+const WORDTOFIND = "ivan".toUpperCase();
 
 
-  computedDisplay=(wordToFind, usedLetter)=>{
-    const wordDisplayed =  wordToFind.toUpperCase().replace(/\w/g, 
-      (letter)=>(usedLetter.has(letter) ? letter: "_"))
-    return wordDisplayed.split('').map((letter, index) => {
-      return <span key={index} className='word-to-find__letter'>{letter}</span>
-    })
-  }
+function App () {
 
-  //arrow fx for binding
-  handleKeyClick = (e) =>{
-    const {usedLetter, guesses}= this.state 
-    const newGeusses = guesses + 1
-    const newUsedLetter = usedLetter.add(e.target.innerText)
-    this.setState({
-      usedLetter: newUsedLetter,
-      guesses: newGeusses
-    })
-
-    this.handleNewLetterFind()
-  }
-
-  //arrow fx for binding
-
-  handleNewgame= () =>{
-    this.setState(INITIAL_STATE)
-  }
-  
-  //arrow fx for binding
-  handleNewLetterFind=()=>{
-    const wordsDisplayed = document.querySelectorAll('.word-to-find__letter')
-    const size = MOT_A_TROUVER.split('').length
-    let letterMissmatched = size
-    wordsDisplayed.forEach(item =>{
-      if (item.innerText === '_'){
-        letterMissmatched--
-      }
-    })
-    const isAllMatched = letterMissmatched === size-1 
-    console.log(letterMissmatched,isAllMatched)
-    this.setState({won: isAllMatched})
-  }
-
-  render(){
-    const {wordToFind, usedLetter, won, guesses} = this.state
-    if (won){
-      return(
-        <div className="container">
-          Vous avez gagnez
-          <div className='keyboard'>
-            <button
-              onClick={this.handleNewgame}
-            >
-              rejouer
-            </button>
-          </div>
-        </div>
-      )
+    const [usedLetters, setUsedLetters] = useState(new Set())
+    const [guesses , setGuesses] = useState(0);
+    const [score, setScore] = useState(0);
+    const initialStates = {
+        score: 0,
+        guesses: 0,
+        usedLetters: new Set()
     }
-    return(
-      <div className="container">
-        <span className='geusses'>{guesses}</span>
-        <div className="word-to-find">
-          {this.computedDisplay(wordToFind, usedLetter)}
-        </div>
-        <div className='keyboard'>
-        <Keyboard letters={KEYBOARD} onClick={this.handleKeyClick}/>
-        </div>
-      </div>
-    )
-  }
-}
+    let won = false
+    
+    // const reg = /\w/g
+    // let fallback = WORDTOFIND.replace(reg, '_');
+
+    const handleClick = (event) =>{
+        if (usedLetters.has(event.target.innerText)){
+            console.log("deja utilisée")
+            setScore(score-2)
+        }else if(WORDTOFIND.split('').includes(event.target.innerText)){
+            console.log("bingo")
+            setScore(score+2)
+        }else{
+            console.log("raté")
+            setScore(score-1)
+        }
+        setUsedLetters(usedLetters.add(event.target.innerText))
+        setGuesses(guesses+1)
+        
+    }
+
+    const handleReplay = () =>{
+        setScore(initialStates.score)
+        setGuesses(initialStates.guesses)
+        setUsedLetters(initialStates.usedLetters)
+    }
+
+    
+    let matchedLetter = 0
+    WORDTOFIND.split('').forEach(letter=>{
+        if (usedLetters.has(letter)) matchedLetter ++
+    })
+    if (matchedLetter === WORDTOFIND.split('').length) won = true
+    console.log(matchedLetter)
+    
+
+    
+
+
+   if (won){
+       return (
+           <div>
+               vous avez gagné 
+               <button onClick={handleReplay}>rejouer</button>
+           </div>
+       )
+   }
+
+   return(
+       <div>
+           {console.log(won)}
+           <div>
+                {'coups :' + guesses}
+            </div>
+            <div>
+            {'score :'+score}
+            </div>
+
+            {WORDTOFIND.split('').map((letter, index)=>{
+                if(!usedLetters.has(letter)) letter = "_"
+
+                return (
+                    <span key={index}>
+                        {letter}
+                    </span>
+                )
+            })}
+            
+
+            <div>
+                {
+                    ALPHABET.map((letter, index)=>{
+                        return(
+                            <button
+                                key = {index}
+                                onClick = {handleClick}
+                            >   
+                                {letter}
+                            </button>
+                        )
+                    })
+                }
+            </div>
+       </div>
+   )
+
+} 
 
 export default App;
